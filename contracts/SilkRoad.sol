@@ -8,7 +8,7 @@ import "./interfaces/IERC721Standard.sol";
 
 // TODO: Unit Tests
 contract SilkRoad is Initializable, AccessControlUpgradeable {
-    event NFTCreated(address owner, address nft);
+    event NFTCreated(address indexed owner, address indexed nft);
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     // owner => list of nfts mapping
     mapping(address => address[]) nfts;

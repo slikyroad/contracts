@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "deploy": "npx hardhat run ./scripts/deploy.ts",
+    "deploy:aura": "npx hardhat run ./scripts/deploy_random_aura.ts --network xdai",
     "compile": "npx hardhat compile",
     "grant-role": "npx hardhat run ./scripts/grantRole.ts",
     "test": "npx hardhat test"

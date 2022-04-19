@@ -27,6 +27,7 @@ contract ERC721Standard is AccessControl, ERC721Enumerable, IERC721Standard {
     uint256 public maxTokens;
     uint256 public tokensCount;
     uint256[] public tokens;
+    mapping(uint256 => bool) minted;
 
     IPOSDAORandom private posdaoRandomContract; // address of RandomAuRa contract
     uint256 private seed;
@@ -91,28 +92,30 @@ contract ERC721Standard is AccessControl, ERC721Enumerable, IERC721Standard {
 
         uint256 _tokenId;
         if (maxTokens > 0) {
-            _tokenId = seed % maxTokens;
+            _tokenId = seed % (maxTokens + tokens.length + block.number);
 
             if (_wasSeedUpdated()) {
                 _tokenId = seed % maxTokens;
             }
-
+            
             if (tokens.length < maxTokens) {
+                require(minted[_tokenId] == false, "Can not mint. Try again");
                 // mint tokenId (indexing and ids start from 0)
                 tokens[_tokenId] = _tokenId;
-                uri[_tokenId] = _uri;
-                super._safeMint(_to, _tokenId);
+                uri[_tokenId] = _uri;             
+                minted[_tokenId] = true;          
+                super._safeMint(_to, _tokenId);                         
             } else if (tokens.length > maxTokens) {
                 revert("All tokens Minted");
             }
         } else {
             _tokenId = currentTokenId;
             currentTokenId++;
+            tokens[_tokenId] = _tokenId;
+            uri[_tokenId] = _uri;
+            minted[_tokenId] = true;       
+            super._safeMint(_to, _tokenId);            
         }
-
-        tokens[_tokenId] = _tokenId;
-        uri[_tokenId] = _uri;
-        super._safeMint(_to, _tokenId);
 
         emit Minted(_tokenId, _to);
     }
