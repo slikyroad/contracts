@@ -12,16 +12,12 @@ contract SilkRandom is ISilkRandom, AccessControlUpgradeable {
     uint256 public batchSize;    
 
     // ============================ INITIALIZER ============================
-    function initialize(address[] memory initialSeeders, uint256 initialSalt) public initializer {
+    function initialize(uint256 initialSalt) public initializer {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-        require(initialSeeders.length < 12, "Too many seeders");
-        for (uint256 i = 0; i < initialSeeders.length; i++) {
-            seed = keccak256(abi.encodePacked(initialSeeders[i], seed));
-        }
 
         batchSize = 10;
         seed = keccak256(
-            abi.encodePacked(block.timestamp, initialSeeders.length, initialSalt, msg.sender, seed)
+            abi.encodePacked(block.timestamp, initialSalt, msg.sender, seed)
         );
     }
 
