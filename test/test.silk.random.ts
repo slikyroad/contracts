@@ -12,11 +12,8 @@ describe("SilkRandom Tests", () => {
   before(async () => {
     const SilkRandom = await ethers.getContractFactory("SilkRandom");
     signers = await ethers.getSigners();
-    initialSeeders = signers.map((signer) => signer.address);
-    console.log("Initial Seeders: ", initialSeeders.slice(0, 10));
     silkRandom = await upgrades.deployProxy(SilkRandom, [
-      initialSeeders.slice(0, 10),
-      new Date().getTime(),
+      new Date().getTime()
     ]);
 
     console.log("Silk Random Deployed: ", silkRandom.address);
@@ -30,7 +27,7 @@ describe("SilkRandom Tests", () => {
 
   it("should update batch size", async () => {
     const bs = silkRandom.batchSize();
-    await expect(silkRandom.updateBatchSize(5)).to.emit(silkRandom, "BatchSizeUpdated");
+    await expect(silkRandom.updateBatchSize(50)).to.emit(silkRandom, "BatchSizeUpdated");
     const bs2 = silkRandom.batchSize();
     expect(bs).to.not.equal(bs2);
   });

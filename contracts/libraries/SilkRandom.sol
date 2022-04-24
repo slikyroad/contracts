@@ -28,28 +28,28 @@ contract SilkRandom is ISilkRandom, AccessControlUpgradeable {
     }
 
     // ============================ PUBLIC METHODS ============================
-    function random() external override returns (bytes32, uint256) {
+    function random() external override returns (uint256) {
         return _random(1);
     }
 
-    function randomWithSalt(uint256 salt) external override returns (bytes32, uint256) {
+    function randomWithSalt(uint256 salt) external override returns (uint256) {
         return _random(salt);
     }
 
-    function batchRandom() external override returns (bytes32, uint256[] memory) {
+    function batchRandom() external override returns (uint256[] memory) {
         return _batchRandom(1);
     }
 
     function batchRandomWithSalt(uint256 salt)
         external    
         override
-        returns (bytes32, uint256[] memory)
+        returns (uint256[] memory)
     {
         return _batchRandom(salt);
     }
 
     // ============================ PRIVATE METHODS ============================
-    function _random(uint256 salt) internal returns (bytes32, uint256) {
+    function _random(uint256 salt) internal returns (uint256) {
         uint256 rnd = uint256(
             keccak256(abi.encodePacked(block.timestamp, msg.sender, salt, seed))
         ) % sufficientlyLargeNumber;
@@ -58,16 +58,16 @@ contract SilkRandom is ISilkRandom, AccessControlUpgradeable {
         seed = keccak256(abi.encodePacked(block.timestamp, msg.sender, salt, oldSeed, rnd));
         emit SeedUpdated(msg.sender, oldSeed, seed);
         emit RandomNumber(oldSeed, rnd);
-        return (oldSeed, rnd);
+        return rnd;
     }
 
-    function _batchRandom(uint256 salt) internal returns (bytes32, uint256[] memory) {
+    function _batchRandom(uint256 salt) internal returns (uint256[] memory) {
         uint256[] memory rands = new uint256[](batchSize);
 
         for (uint256 i = 0; i < batchSize; i++) {
-            (, rands[i]) = _random(i + salt);
+            rands[i] = _random(i + salt);
         }
 
-        return (seed, rands);
+        return  rands;
     }
 }

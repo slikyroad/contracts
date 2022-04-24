@@ -1,0 +1,9 @@
+[
+  'SilkRandom deployed to: ',
+  '0x081dFD69c48B87Ba23b10C2d4F69D4F39D0252d3'
+]
+[
+  'SilkRoad deployed to',
+  '0x8a0aDd298d14a66EAF58dB89ef0E69294784A6AD'
+]
+[ 2022-04-24T04:30:15.156Z ]
