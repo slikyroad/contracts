@@ -7,11 +7,13 @@ async function main() {
     log(accounts[0].address);
     
     const SilkRandom = await ethers.getContractFactory("SilkRandom");
-    const silkRandom = await upgrades.deployProxy(SilkRandom, [new Date().getTime()]);
+    const silkRandom = await SilkRandom.deploy(new Date().getTime());
+    // const silkRandom = await upgrades.deployProxy(SilkRandom, [new Date().getTime()]);
     log("SilkRandom deployed to: ", silkRandom.address);
 
     const SilkRoad = await ethers.getContractFactory("SilkRoad");
-    const srContract = await upgrades.deployProxy(SilkRoad, ["SilkRandom", silkRandom.address]);
+    const srContract = await SilkRoad.deploy("SilkRandom", silkRandom.address);
+    // const srContract = await upgrades.deployProxy(SilkRoad, ["SilkRandom", silkRandom.address]);
     log("SilkRoad deployed to", srContract.address);
 }
 

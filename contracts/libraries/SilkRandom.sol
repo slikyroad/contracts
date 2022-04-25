@@ -2,23 +2,23 @@
 pragma solidity 0.8.4;
 
 import "../interfaces/ISilkRandom.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+// import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+//import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract SilkRandom is ISilkRandom, AccessControlUpgradeable {
+contract SilkRandom is ISilkRandom, AccessControl {
     uint256 private constant sufficientlyLargeNumber = 9007199254740991;
 
     bytes32 public seed;
-    uint256 public batchSize;    
+    uint256 public batchSize;
 
     // ============================ INITIALIZER ============================
-    function initialize(uint256 initialSalt) public initializer {
+    // function initialize(uint256 initialSalt) public initializer {
+    constructor(uint256 initialSalt) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
         batchSize = 10;
-        seed = keccak256(
-            abi.encodePacked(block.timestamp, initialSalt, msg.sender, seed)
-        );
+        seed = keccak256(abi.encodePacked(block.timestamp, initialSalt, msg.sender, seed));
     }
 
     // ============================ PRIVILEGED METHODS ============================
@@ -40,11 +40,7 @@ contract SilkRandom is ISilkRandom, AccessControlUpgradeable {
         return _batchRandom(1);
     }
 
-    function batchRandomWithSalt(uint256 salt)
-        external    
-        override
-        returns (uint256[] memory)
-    {
+    function batchRandomWithSalt(uint256 salt) external override returns (uint256[] memory) {
         return _batchRandom(salt);
     }
 
@@ -68,6 +64,6 @@ contract SilkRandom is ISilkRandom, AccessControlUpgradeable {
             rands[i] = _random(i + salt);
         }
 
-        return  rands;
+        return rands;
     }
 }

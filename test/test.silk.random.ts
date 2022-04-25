@@ -5,16 +5,13 @@ import { ethers, upgrades } from "hardhat";
 
 describe("SilkRandom Tests", () => {
   let silkRandom: Contract;
-  let initialSeeders: string[];
   let signers: SignerWithAddress[];
   let seed = "";
 
   before(async () => {
     const SilkRandom = await ethers.getContractFactory("SilkRandom");
     signers = await ethers.getSigners();
-    silkRandom = await upgrades.deployProxy(SilkRandom, [
-      new Date().getTime()
-    ]);
+    silkRandom = await SilkRandom.deploy(new Date().getTime());
 
     console.log("Silk Random Deployed: ", silkRandom.address);
   });
