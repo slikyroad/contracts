@@ -8,7 +8,7 @@ import "./interfaces/IERC721Standard.sol";
 
 // TODO: Unit Tests
 contract SilkRoad is Initializable, AccessControlUpgradeable {
-    event NFTCreated(address indexed owner, address indexed nft);
+    event CollectionCreated(address indexed owner, address indexed collection);
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     // owner => list of nfts mapping
     mapping(address => address[]) public nfts;
@@ -17,7 +17,7 @@ contract SilkRoad is Initializable, AccessControlUpgradeable {
 
     IERC721Standard controller;
     
-    mapping(string => address) randomContract;
+    mapping(string => address) public randomContract;
     string[] public randomContracts;
 
 
@@ -36,21 +36,21 @@ contract SilkRoad is Initializable, AccessControlUpgradeable {
         return randomContracts;
     }
 
-    function createNft(
+    function createCollection(
         uint256 _maxTokens,
+        uint256 _price,
         string memory _id,
         string memory _name,
         string memory _symbol,
         string memory _randomContractName
     ) public {
         require(registry[_id] == address(0), "Contract with ID already exists");
-        address nftOwner = _msgSender();
-        RandomizedCollection nft;        
+        address collectionOwner = _msgSender();
         require(randomContract[_randomContractName] != address(0), 'Unknown random contract');
-        nft = new RandomizedCollection(_maxTokens, _name, _symbol, nftOwner, randomContract[_randomContractName]);
-        address nftAddress = address(nft);
-        nfts[nftOwner].push(nftAddress);
-        registry[_id] = nftAddress;
-        emit NFTCreated(nftOwner, nftAddress);
+        RandomizedCollection collection = new RandomizedCollection(_maxTokens, _price, _name, _symbol, collectionOwner, randomContract[_randomContractName]);
+        address collectionAddress = address(collection);
+        nfts[collectionOwner].push(collectionAddress);
+        registry[_id] = collectionAddress;
+        emit CollectionCreated(collectionOwner, collectionAddress);
     }
 }

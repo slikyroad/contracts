@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "../interfaces/IERC721Standard.sol";
 import "../interfaces/ISilkRandom.sol";
+import "hardhat/console.sol";
 
 contract RandomizedCollection is AccessControl, ERC721Enumerable, IERC721Standard {
     event Minted(uint256 indexed tokenId, address indexed owner);
@@ -15,9 +16,9 @@ contract RandomizedCollection is AccessControl, ERC721Enumerable, IERC721Standar
 
     mapping(uint256 => string) public uri;
 
-    uint256 public constant UNIT = 1e18;
-
     address owner;
+
+    uint256 price;
 
     uint256 public maxTokens;
     uint256 private randomLength;
@@ -31,6 +32,7 @@ contract RandomizedCollection is AccessControl, ERC721Enumerable, IERC721Standar
 
     constructor(
         uint256 _maxTokens,
+        uint256 _price,
         string memory _name,
         string memory _symbol,
         address _owner,
@@ -39,6 +41,8 @@ contract RandomizedCollection is AccessControl, ERC721Enumerable, IERC721Standar
         require(_randomContract != address(0));
 
         maxTokens = _maxTokens;
+        price = _price;
+        owner = _owner;
 
         if (maxTokens > 0) {
             tokens = new uint256[](maxTokens);
@@ -53,15 +57,22 @@ contract RandomizedCollection is AccessControl, ERC721Enumerable, IERC721Standar
 
     // ========== ADMIN FUNCTIONS ==========
 
-    function mint(address _to, string memory _uri) external virtual override {
-        _safeMint(_to, _uri);
+    function mint(string memory _uri) external payable virtual override {
+        require(msg.value >= price, "Price too low");
+        _safeMint(msg.sender, _uri);
     }
 
-    function batchMint(address[] memory _to, string[] memory _uri) external virtual {
-        require(_to.length == _uri.length, "Invalid params");
-        require(_to.length <= 20, "Not more than 20 at a time");
-        for (uint256 i = 0; i < _to.length; i++) {
-            _safeMint(_to[i], _uri[i]);
+    function withdraw() external override {
+        (bool successFee, ) = payable(owner).call{value: address(this).balance}("");
+
+        require(successFee, "Withdrawal Failed");
+    }
+
+    function batchMint(string[] memory _uri) external payable virtual override {
+        require(_uri.length <= 20, "Not more than 20 at a time");
+        require(_uri.length * price >= msg.value, "Price too low");
+        for (uint256 i = 0; i < _uri.length; i++) {
+            _safeMint(msg.sender, _uri[i]);
         }
     }
 
@@ -170,18 +181,11 @@ contract RandomizedCollection is AccessControl, ERC721Enumerable, IERC721Standar
 
         uint256 _tokenId;
         if (maxTokens > 0) {
-            _tokenId = randomContract.random() % tokens.length;
-
-            if (tokens.length < maxTokens) {
-                require(minted[_tokenId] == false, "Can not mint. Try again");
-                // mint tokenId (indexing and ids start from 0)
-                tokens[_tokenId] = _tokenId;
-                uri[_tokenId] = _uri;
-                minted[_tokenId] = true;
-                super._safeMint(_to, _tokenId);
-            } else if (tokens.length > maxTokens) {
-                revert("All tokens Minted");
-            }
+            _tokenId = _getTokenId();
+            require(minted[_tokenId] == false, "Can not mint. Try again");
+            uri[_tokenId] = _uri;
+            minted[_tokenId] = true;
+            super._safeMint(_to, _tokenId);
         } else {
             _tokenId = currentTokenId;
             currentTokenId++;
