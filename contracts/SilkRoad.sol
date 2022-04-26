@@ -25,11 +25,11 @@ contract SilkRoad is AccessControl {
     constructor(string memory name, address _randomContract) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _setupRole(MINTER_ROLE, _msgSender());
-        addRandomContract(name, _randomContract);
+        randomContract[name] = _randomContract;
+        randomContracts.push(name);
     }
 
     function addRandomContract(string memory name, address _randomContract) public {
-        console.log("RCN: ", name);
         randomContract[name] = _randomContract;
         randomContracts.push(name);
     }

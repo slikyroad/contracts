@@ -1,3 +1,31 @@
+➜  contracts git:(no-upgradeable) ✗ yarn deploy:random --network xdai                                  
+yarn run v1.22.17
+$ npx hardhat run ./scripts/deploy_random.ts --network xdai
+[ '0x729F19e4C405758C93F59E5f098190cB2382d883' ]
+[
+  'SilkRandom deployed to: ',
+  '0x6b57213dcf782f50703Fd4781a021649bFa711fb'
+]
+[
+  'SilkRoad deployed to',
+  '0xdf91d78a328617B503618F0ecB15AcF98eF941BA'
+]
+[ 2022-04-25T23:35:46.895Z ]
+[ 'Done' ]
+
+
+[ '0x729F19e4C405758C93F59E5f098190cB2382d883' ]
+[
+  'SilkRandom deployed to: ',
+  '0x71Be53a537cde9aa08078138cf7DB8EAcBB322bB'
+]
+[
+  'SilkRoad deployed to',
+  '0x4B93079F2C2B3f697346c180ACcb43F1A6f58FAa'
+]
+[ 2022-04-25T23:02:59.041Z ]
+[ 'Done' ]
+
 [
   'SilkRandom deployed to: ',
   '0xbb510C67E8Ca7673a79036D54624EEcEf5df7016'
