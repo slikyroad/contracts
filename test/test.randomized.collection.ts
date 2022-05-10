@@ -67,7 +67,7 @@ describe("SilkRandom Tests", () => {
       collectionAddress
     );
     for (let i = 0; i < _maxTokens; i++) {
-      await expect(collection.mint("http://URI/" + i, overrides)).to.emit(collection, "Minted");
+      await expect(collection.mint(overrides)).to.emit(collection, "Minted");
     }
 
     const minted: Array<Number> = [];
@@ -105,8 +105,7 @@ describe("SilkRandom Tests", () => {
       collectionAddress
     );
 
-    const uris = Array(20).fill("URI");
-    await collection.batchMint(uris);
+    await collection.batchMint(20);
 
     const minted: Array<Number> = [];
     for (let i = 0; i < _maxTokens; i++) {
@@ -127,7 +126,7 @@ describe("SilkRandom Tests", () => {
       "RandomizedCollection",
       collectionAddress
     );
-    await expect(collection.mint("http://URI/", overrides)).to.be.revertedWith(
+    await expect(collection.mint(overrides)).to.be.revertedWith(
       "Can not mint. All tokens already minted"
     );
 
@@ -135,7 +134,7 @@ describe("SilkRandom Tests", () => {
     _id = signers[0].address + _name;
     collectionAddress = await silkRoad.registry(_id);
     collection = await ethers.getContractAt("RandomizedCollection", collectionAddress);
-    await expect(collection.mint("http://URI/", overrides)).to.be.revertedWith(
+    await expect(collection.mint(overrides)).to.be.revertedWith(
       "Can not mint. All tokens already minted"
     );
   });

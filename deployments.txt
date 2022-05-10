@@ -1,3 +1,6 @@
+
+-----------------------------------------------------------------------------------------------------------------------
+
 ➜  contracts git:(no-upgradeable) ✗ yarn deploy:random --network xdai                                  
 yarn run v1.22.17
 $ npx hardhat run ./scripts/deploy_random.ts --network xdai
@@ -13,6 +16,7 @@ $ npx hardhat run ./scripts/deploy_random.ts --network xdai
 [ 2022-04-25T23:35:46.895Z ]
 [ 'Done' ]
 
+-----------------------------------------------------------------------------------------------------------------------
 
 [ '0x729F19e4C405758C93F59E5f098190cB2382d883' ]
 [

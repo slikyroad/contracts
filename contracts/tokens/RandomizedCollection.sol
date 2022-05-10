@@ -57,9 +57,17 @@ contract RandomizedCollection is AccessControl, ERC721Enumerable, IERC721Standar
 
     // ========== ADMIN FUNCTIONS ==========
 
-    function mint(string memory _uri) external payable virtual override {
+    function mint() external payable virtual override {
         require(msg.value >= price, "Price too low");
-        _safeMint(msg.sender, _uri);
+        _safeMint(msg.sender);
+    }
+
+    function setTokenUri(uint256 _tokenId, string memory _uri) external virtual override {
+        require(bytes(_uri).length > 0, "Invalid URI");
+        address _owner = ownerOf(_tokenId);
+        require(msg.sender == _owner);
+
+        uri[_tokenId] = _uri;
     }
 
     function withdraw() external override {
@@ -68,11 +76,11 @@ contract RandomizedCollection is AccessControl, ERC721Enumerable, IERC721Standar
         require(successFee, "Withdrawal Failed");
     }
 
-    function batchMint(string[] memory _uri) external payable virtual override {
-        require(_uri.length <= 20, "Not more than 20 at a time");
-        require(_uri.length * price >= msg.value, "Price too low");
-        for (uint256 i = 0; i < _uri.length; i++) {
-            _safeMint(msg.sender, _uri[i]);
+    function batchMint(uint256 howMany) external payable virtual override {
+        require(howMany <= 20, "Not more than 20 at a time");
+        require(howMany * price >= msg.value, "Price too low");
+        for (uint256 i = 0; i < howMany; i++) {
+            _safeMint(msg.sender);
         }
     }
 
@@ -175,22 +183,19 @@ contract RandomizedCollection is AccessControl, ERC721Enumerable, IERC721Standar
         return _tokenId;
     }
 
-    function _safeMint(address _to, string memory _uri) internal {
-        require(bytes(_uri).length > 0, "Invalid URI");
+    function _safeMint(address _to) internal {        
         require(_to != address(0), "Invalid Address");
 
         uint256 _tokenId;
         if (maxTokens > 0) {
             _tokenId = _getTokenId();
             require(minted[_tokenId] == false, "Can not mint. Try again");
-            uri[_tokenId] = _uri;
             minted[_tokenId] = true;
             super._safeMint(_to, _tokenId);
         } else {
             _tokenId = currentTokenId;
             currentTokenId++;
             tokens[_tokenId] = _tokenId;
-            uri[_tokenId] = _uri;
             minted[_tokenId] = true;
             super._safeMint(_to, _tokenId);
         }
