@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { Contract } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
-describe("SilkRandom Tests", () => {
+describe("Randomized Collection Tests", () => {
   let silkRandom: Contract;
   let silkRoad: Contract;
   const _maxTokens = 20;

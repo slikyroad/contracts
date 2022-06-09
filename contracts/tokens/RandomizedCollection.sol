@@ -16,6 +16,8 @@ contract RandomizedCollection is AccessControl, ERC721Enumerable, IERC721Standar
 
     mapping(uint256 => string) public uri;
 
+    mapping(address => uint[]) public ownerTokens;
+
     address owner;
 
     uint256 price;
